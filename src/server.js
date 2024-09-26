@@ -2,6 +2,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const taskRoutes = require('./routes/tasks');
+const signupRoutes = require('./routes/signup');
+const loginRoutes = require('./routes/login');
 const cors = require('cors');
 require('dotenv').config(); // To load the .env variables
 
@@ -26,7 +28,10 @@ mongoose.connect(process.env.MONGO_URI)
     console.error('MongoDB connection error:', err);
   });
 
-// Use task routes
+//Routes
+
+app.use('/api/signup', signupRoutes);
+app.use('/api/login', loginRoutes);
 app.use('/api/tasks', taskRoutes);
 
 // Start the server
