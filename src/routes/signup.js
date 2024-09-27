@@ -1,17 +1,16 @@
 const express = require('express');
-const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 
 const router = express.Router();
 
-// Setup Nodemailer transporter (use your SMTP or email service provider)
+// Setup Nodemailer transporter
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: process.env.EMAIL, // Your email
-        pass: process.env.EMAIL_PASSWORD // Your email password or app password
+        pass: process.env.EMAIL_PASSWORD // Your app password
     }
 });
 
@@ -30,32 +29,22 @@ const sendVerificationEmail = (email, token) => {
     return transporter.sendMail(mailOptions);
 };
 
-// POST: Register a new user
-router.post('/', async (req, res) => {
+// POST: Register a new user (without saving to DB)
+router.post('/register', async (req, res) => {
     const { email, password } = req.body;
 
-    // Validate the input
+    // Validate input
     if (!email || !password) {
         return res.status(400).json({ message: 'Email and password are required.' });
     }
 
     try {
-        // Check if the user already exists
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: 'User already exists.' });
-        }
-
         // Hash the password
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-        // Create the new user but mark them as unverified
-        const user = new User({ email, password: hashedPassword, isVerified: false });
-        await user.save();
-
-        // Generate a verification token (valid for 1 hour)
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        // Generate a verification token (contains email and password, valid for 1 hour)
+        const token = jwt.sign({ email, password: hashedPassword }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         // Send verification email
         await sendVerificationEmail(email, token);
@@ -63,6 +52,34 @@ router.post('/', async (req, res) => {
         res.status(201).json({ message: 'User registered successfully! Please check your email to verify your account.' });
     } catch (err) {
         res.status(500).json({ message: err.message });
+    }
+});
+
+// GET: Verify email (to save user to DB)
+router.get('/verify-email', async (req, res) => {
+    const { token } = req.query;
+
+    if (!token) {
+        return res.status(400).json({ message: 'Verification token is missing.' });
+    }
+
+    try {
+        // Verify the token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        // Check if the user already exists
+        const existingUser = await User.findOne({ email: decoded.email });
+        if (existingUser) {
+            return res.status(400).json({ message: 'User already verified.' });
+        }
+
+        // Save the user to the database
+        const newUser = new User({ email: decoded.email, password: decoded.password, isVerified: true });
+        await newUser.save();
+
+        res.redirect('http://taskify-ten-hazel.vercel.app/welcome'); // Redirect to your frontend welcome page
+    } catch (err) {
+        res.status(400).json({ message: 'Invalid or expired token.' });
     }
 });
 
