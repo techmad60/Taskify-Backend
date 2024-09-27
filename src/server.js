@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const taskRoutes = require('./routes/tasks');
 const signupRoutes = require('./routes/signup');
 const loginRoutes = require('./routes/login');
-//const verifyEmailRoutes = require('./routes/verifyEmail');
+const verifyEmailRoutes = require('./routes/verifyEmail');
 const allowedOrigins = require('./allowedOrigins');
 const cors = require('cors');
 
@@ -42,7 +42,7 @@ mongoose.connect(process.env.MONGO_URI)
 app.use('/api/signup', signupRoutes);
 app.use('/api/login', loginRoutes);
 app.use('/api/tasks', taskRoutes);
-//app.use('/api/verify-email', verifyEmailRoutes);
+app.use('/api/verify-email', verifyEmailRoutes);
 
 
 // Start the server
