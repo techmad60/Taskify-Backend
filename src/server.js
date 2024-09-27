@@ -38,13 +38,13 @@ mongoose.connect(process.env.MONGO_URI)
         console.error('MongoDB connection error:', err);
     });
 
-// Routes
-// app.use('/api/signup', signupRoutes);
-// app.use('/api/login', loginRoutes);
-// app.use('/api/tasks', taskRoutes);
-// app.use('/api/verify-email', verifyEmailRoutes);
+//Routes
+app.use('/api/signup', signupRoutes);
+app.use('/api/login', loginRoutes);
+app.use('/api/tasks', taskRoutes);
+app.use('/api/verify-email', verifyEmailRoutes);
 app.use('/api/request-reset', requestResetRoutes); // Add request reset routes
-//app.use('/api/reset-password', resetPasswordRoutes); // Add reset password routes
+app.use('/api/reset-password', resetPasswordRoutes); // Add reset password routes
 
 // Error handling middleware (optional but recommended)
 app.use((err, req, res, next) => {
