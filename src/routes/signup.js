@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
 
 // Function to send verification email
 const sendVerificationEmail = (email, token) => {
-    const verificationLink = `${process.env.REACT_APP_API_URL}/api/verify-email?token=${token}`;
+    const verificationLink = `http://localhost:5000/api/verify-email?token=${token}`;
 
     const mailOptions = {
         from: process.env.EMAIL,
