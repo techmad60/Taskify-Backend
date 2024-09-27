@@ -1,5 +1,5 @@
 const mongoose = require ('mongoose');
-const bcrypt = require ('bcrypt');
+
 
 // Create user schema
 const userSchema = new mongoose.Schema({
@@ -11,17 +11,13 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-    }
+    },
+    isVerified: { 
+        type: Boolean, 
+        default: false 
+    } 
 });
 
-// Pre-save middleware to hash password before saving
-userSchema.pre('save', async function (next) {
-    const user = this;
-    if (user.isModified('password')) {
-        user.password = await bcrypt.hash(user.password, 10); // Hash the password with bcrypt
-    }
-    next();
-});
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;
