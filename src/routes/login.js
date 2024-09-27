@@ -7,6 +7,7 @@ const router = express.Router();
 
 // POST: User login
 router.post('/', async (req, res) => {
+    console.log("Login attempt:", req.body); // Log incoming request
     const { email, password } = req.body;
 
     // Validate the input
@@ -20,10 +21,11 @@ router.post('/', async (req, res) => {
         if (!user) {
             return res.status(400).json({ message: 'Invalid email or password.' });
         }
+
+        // Check if the user is verified
         if (!user.isVerified) {
             return res.status(403).json({ message: 'User not verified. Please check your email to verify your account.' });
         }
-
 
         // Compare the password
         const isMatch = await bcrypt.compare(password, user.password);
@@ -33,8 +35,8 @@ router.post('/', async (req, res) => {
 
         // Issue JWT
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
         res.json({ token });
+
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
