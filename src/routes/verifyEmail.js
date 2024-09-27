@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 
 // GET: Verify email (to save user to DB)
-router.get('/verify-email', async (req, res) => {
+router.get('/', async (req, res) => {
     const { token } = req.query;
 
     if (!token) {
@@ -31,6 +31,4 @@ router.get('/verify-email', async (req, res) => {
         res.status(400).json({ message: 'Invalid or expired token.' });
     }
 });
-
-
 module.exports = router;
