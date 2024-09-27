@@ -5,15 +5,17 @@ const taskRoutes = require('./routes/tasks');
 const signupRoutes = require('./routes/signup');
 const loginRoutes = require('./routes/login');
 const verifyEmailRoutes = require('./routes/verifyEmail');
+const resetPasswordRoutes = require('./routes/resetPassword'); // Import reset password routes
+const requestResetRoutes = require('./routes/requestReset'); // Import request reset routes
 const allowedOrigins = require('./allowedOrigins');
 const cors = require('cors');
-
 require('dotenv').config(); // To load the .env variables
 
 // Initialize express app
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// CORS configuration
 app.use(cors({
     origin: function (origin, callback) {
         if (!origin || allowedOrigins.indexOf(origin) !== -1) {
@@ -24,26 +26,31 @@ app.use(cors({
     }
 }));
 
-
 // Middleware
-app.use(express.json());
+app.use(express.json()); // Parse JSON bodies
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log('MongoDB connected successfully');
-  })
-  .catch(err => {
-    console.error('MongoDB connection error:', err);
-  });
+    .then(() => {
+        console.log('MongoDB connected successfully');
+    })
+    .catch(err => {
+        console.error('MongoDB connection error:', err);
+    });
 
-//Routes
+// Routes
+// app.use('/api/signup', signupRoutes);
+// app.use('/api/login', loginRoutes);
+// app.use('/api/tasks', taskRoutes);
+// app.use('/api/verify-email', verifyEmailRoutes);
+app.use('/api/request-reset', requestResetRoutes); // Add request reset routes
+//app.use('/api/reset-password', resetPasswordRoutes); // Add reset password routes
 
-app.use('/api/signup', signupRoutes);
-app.use('/api/login', loginRoutes);
-app.use('/api/tasks', taskRoutes);
-app.use('/api/verify-email', verifyEmailRoutes);
-
+// Error handling middleware (optional but recommended)
+app.use((err, req, res, next) => {
+    console.error(err.stack); // Log error stack for debugging
+    res.status(500).send('Something broke!'); // Send a generic error response
+});
 
 // Start the server
 app.listen(PORT, () => {

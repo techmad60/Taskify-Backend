@@ -16,6 +16,13 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false, // Default to false, meaning unverified
     },
+    passwordResetToken: { 
+        type: String, 
+        required: false },
+    passwordResetExpires: { 
+        type: Date, 
+        required: false 
+    },
 
 });
 
