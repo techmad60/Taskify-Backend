@@ -11,9 +11,15 @@ router.post('/', async (req, res) => {
     const { email } = req.body;
 
     try {
+        // Check if the email is provided
+        if (!email) {
+            return res.status(400).json({ message: 'Email is required' });
+        }
+
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ message: 'User not found' });
+            console.log(`User with email ${email} not found.`);
+            return res.status(400).json({ message: 'User not found, signup!' });
         }
 
         // Generate reset token
@@ -31,7 +37,7 @@ router.post('/', async (req, res) => {
             },
         });
 
-        const resetUrl = `https://taskify-ten-hazel.vercel.app/reset-password/${resetToken}`;
+        const resetUrl = `https://taskify-ten-hazel.vercel.app/reset-password`;
         await transporter.sendMail({
             to: user.email,
             subject: 'Password Reset',
@@ -40,6 +46,7 @@ router.post('/', async (req, res) => {
 
         res.json({ message: 'Reset link sent to your email' });
     } catch (err) {
+        console.error("Error in request-reset:", err); // Log error for debugging
         res.status(500).json({ message: 'Error sending reset email' });
     }
 });
