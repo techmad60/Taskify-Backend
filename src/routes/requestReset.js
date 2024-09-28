@@ -37,7 +37,8 @@ router.post('/', async (req, res) => {
             },
         });
 
-        const resetUrl = `https://taskify-ten-hazel.vercel.app/reset-password`;
+        const resetUrl = `https://taskify-ten-hazel.vercel.app/reset-password?token=${resetToken}`;
+
         await transporter.sendMail({
             to: user.email,
             subject: 'Password Reset',
