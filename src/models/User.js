@@ -3,10 +3,6 @@ const mongoose = require ('mongoose');
 
 // Create user schema
 const userSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-    },
     email: {
         type: String,
         required: true,
