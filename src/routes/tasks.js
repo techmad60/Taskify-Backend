@@ -1,12 +1,22 @@
-// src/routes/tasks.js
 const express = require('express');
 const Task = require('../models/Task');
+const authMiddleware = require('../middlewares/authMiddleware'); // Import your auth middleware
 const router = express.Router();
 
+// Create a new task (only for authenticated users)
+router.post('/', authMiddleware, async (req, res) => {
+    const { title, startDate, endDate, priority, status } = req.body;
 
-// Create a new task
-router.post('/', async (req, res) => {
-    const task = new Task(req.body);
+    // Create a new task and associate it with the logged-in user
+    const task = new Task({
+        title,
+        startDate,
+        endDate,
+        priority,
+        status,
+        user: req.user.userId // Link task to the authenticated user
+    });
+
     try {
         const savedTask = await task.save();
         res.status(201).json(savedTask);
@@ -15,38 +25,52 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Read all tasks
-router.get('/', async (req, res) => {
+// Read all tasks for the logged-in user
+router.get('/', authMiddleware, async (req, res) => {
     try {
-        const tasks = await Task.find();
+        // Only return tasks for the logged-in user
+        const tasks = await Task.find({ user: req.user.userId });
         res.json(tasks);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 });
 
-// Update a task
-router.put('/:id', async (req, res) => {
+// Update a task (only for the logged-in user's tasks)
+router.put('/:id', authMiddleware, async (req, res) => {
     try {
-        const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        // Ensure that the task belongs to the logged-in user
+        const task = await Task.findOne({ _id: req.params.id, user: req.user.userId });
+        if (!task) {
+            return res.status(404).json({ message: "Task not found or you're not authorized to update this task" });
+        }
+
+        // Update task properties
+        task.title = req.body.title || task.title;
+        task.startDate = req.body.startDate || task.startDate;
+        task.endDate = req.body.endDate || task.endDate;
+        task.priority = req.body.priority || task.priority;
+        task.status = req.body.status || task.status;
+
+        const updatedTask = await task.save();
         res.json(updatedTask);
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
 });
 
-// Delete a task
-router.delete('/:id', async (req, res) => {
+// Delete a task (only for the logged-in user's tasks)
+router.delete('/:id', authMiddleware, async (req, res) => {
     try {
-        const task = await Task.findByIdAndDelete(req.params.id);
+        // Ensure the task belongs to the logged-in user
+        const task = await Task.findOneAndDelete({ _id: req.params.id, user: req.user.userId });
         if (!task) {
-            return res.status(404).json({ message: "Task not found" });
+            return res.status(404).json({ message: "Task not found or you're not authorized to delete this task" });
         }
-        res.status(200).json({ message: "Task deleted successfully" }); // Send confirmation
+        res.status(200).json({ message: "Task deleted successfully" });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 });
-
 
 module.exports = router;

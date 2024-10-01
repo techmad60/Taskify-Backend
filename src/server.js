@@ -9,6 +9,7 @@ const resetPasswordRoutes = require('./routes/resetPassword'); // Import reset p
 const requestResetRoutes = require('./routes/requestReset'); // Import request reset routes
 const allowedOrigins = require('./allowedOrigins');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 require('dotenv').config(); // To load the .env variables
 
 // Initialize express app
@@ -23,11 +24,13 @@ app.use(cors({
         } else {
             callback(new Error('Not allowed by CORS'));
         }
-    }
+    },
+    credentials: true,
 }));
 
 // Middleware
 app.use(express.json()); // Parse JSON bodies
+app.use(cookieParser()); // Parse cookies from incoming requests
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
