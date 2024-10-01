@@ -35,7 +35,7 @@ router.post('/', async (req, res) => {
 
         // Issue JWT
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
+        
         // Set token in an HTTP-only cookie
         res.cookie('token', token, {
             httpOnly: true,   // Cookie is not accessible via JavaScript (prevents XSS)
@@ -45,7 +45,7 @@ router.post('/', async (req, res) => {
         });
 
         // Send a single response
-        res.json({ message: 'Login successful' }); // Send success message only
+        res.json({ token }); // Send success message only
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
