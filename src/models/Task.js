@@ -21,4 +21,6 @@ const taskSchema = new mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true } // Reference the user
 });
 
-
+// Export the model to be used in routes
+const Task = mongoose.model('Task', taskSchema);
+module.exports = Task;
