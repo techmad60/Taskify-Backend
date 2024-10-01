@@ -1,7 +1,7 @@
-const express = require ('express');
-const User = require ('../models/User') ;
-const bcrypt = require ('bcrypt');
-const jwt = require ('jsonwebtoken');
+const express = require('express');
+const User = require('../models/User');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 
@@ -35,7 +35,6 @@ router.post('/', async (req, res) => {
 
         // Issue JWT
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.json({ token });
 
         // Set token in an HTTP-only cookie
         res.cookie('token', token, {
@@ -45,8 +44,8 @@ router.post('/', async (req, res) => {
             maxAge: 60 * 60 * 1000, // Token expires in 1 hour
         });
 
-        res.json({ message: 'Login successful' });
-
+        // Send a single response
+        return res.json({ message: 'Login successful' }); // Send success message only
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
