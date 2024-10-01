@@ -45,7 +45,7 @@ router.post('/', async (req, res) => {
         });
 
         // Send a single response
-        return res.json({ message: 'Login successful' }); // Send success message only
+        res.json({ message: 'Login successful' }); // Send success message only
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
