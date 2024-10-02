@@ -42,6 +42,7 @@ router.post('/', async (req, res) => {
             secure: true, // Set secure flag in production (requires HTTPS)
             sameSite: 'strict', // Helps prevent CSRF attacks
             maxAge: 60 * 60 * 1000, // Token expires in 1 hour
+            path: '/'
         });
         console.log('Token set in cookie:', token); 
         // Send a single response
