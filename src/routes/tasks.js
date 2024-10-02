@@ -11,29 +11,31 @@ router.post('/', authMiddleware, async (req, res) => {
     console.log("Request Body:", req.body);
 
     // Ensure all required fields are provided
-    if (!title || !startDate || !endDate || !priority || !status) {
-        return res.status(400).json({ message: "All fields are required." });
+    if (!title || !startDate || !endDate) {
+        return res.status(400).json({ message: "Title, start date, and end date are required." });
     }
 
     const task = new Task({
         title,
         startDate,
         endDate,
-        priority,
-        status,
-        user: req.user
+        priority: priority || 'defaultPriority', // Set default if not provided
+        status: status || 'defaultStatus',       // Set default if not provided
+        user: req.user._id // Ensure you're saving the user's ID
     });
-
-   
-
 
     try {
         const savedTask = await task.save();
-       return res.status(201).json(savedTask);
+        return res.status(201).json(savedTask);
     } catch (err) {
-        return res.status(400).json({ message: err.message });
+        console.error("Error saving task:", err); // Log the error
+        if (err.name === 'ValidationError') {
+            return res.status(400).json({ message: 'Validation error', details: err.errors });
+        }
+        return res.status(500).json({ message: 'Internal server error' });
     }
 });
+
 
 // Read all tasks for the logged-in user
 router.get('/', authMiddleware, async (req, res) => {
