@@ -10,15 +10,20 @@ router.post('/', authMiddleware, async (req, res) => {
     const { title, startDate, endDate, priority, status } = req.body;
     console.log("Request Body:", req.body);
 
-    // Create a new task and associate it with the logged-in user
+    // Ensure all required fields are provided
+    if (!title || !startDate || !endDate || !priority || !status) {
+        return res.status(400).json({ message: "All fields are required." });
+    }
+
     const task = new Task({
         title,
         startDate,
         endDate,
         priority,
         status,
-        user: req.user // Link task to the authenticated user
+        user: req.user
     });
+
    
 
 
