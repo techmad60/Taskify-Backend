@@ -5,14 +5,20 @@ const router = express.Router();
 
 
 
+
 // Create a new task (only for authenticated users)
 router.post('/', authMiddleware, async (req, res) => {
     const { title, startDate, endDate, priority, status } = req.body;
     console.log("Request Body:", req.body);
+    console.log("User from request:", req.user); // Log user to check if it's set correctly
 
     // Ensure all required fields are provided
     if (!title || !startDate || !endDate) {
         return res.status(400).json({ message: "Title, start date, and end date are required." });
+    }
+
+    if (!req.user || !req.user._id) { // Check if user ID is available
+        return res.status(400).json({ message: "User is not authenticated." });
     }
 
     const task = new Task({
