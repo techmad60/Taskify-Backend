@@ -4,8 +4,8 @@ const { v4: uuidv4 } = require('uuid');
 const taskSchema = new mongoose.Schema({
     _id: { type: String, default: uuidv4 }, // Use _id instead of id
     title: { type: String, required: true }, // Required field: Title is essential
-    startDate: { type: Date, required: false }, // Optional start date
-    endDate: { type: Date, required: false }, // Optional end date (deadline)
+    startDate: { type: Date, required: true }, // Optional start date
+    endDate: { type: Date, required: true }, // Optional end date (deadline)
     estimatedDuration: { 
         type: Number, 
         default: function() {
@@ -15,9 +15,9 @@ const taskSchema = new mongoose.Schema({
             return 0;
         }
     }, // Automatically calculate duration if dates exist
-    priority: { type: String, enum: ['Low', 'Medium', 'High'], default: 'Medium', required: false }, // Optional priority
-    description: { type: String, required: false }, // Optional description
-    status: { type: String, enum: ['Not Started', 'In Progress', 'Completed'], default: 'Not Started', required: false }, // Status added
+    priority: { type: String, enum: ['Low', 'Medium', 'High'], default: 'Medium', required: true }, // Optional priority
+    //description: { type: String, required: false }, // Optional description
+    status: { type: String, enum: ['Not Started', 'In Progress', 'Completed'], default: 'Not Started', required: true }, // Status added
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true } // Reference to User
 });
 
