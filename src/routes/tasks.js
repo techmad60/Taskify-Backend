@@ -8,6 +8,7 @@ const router = express.Router();
 // Create a new task (only for authenticated users)
 router.post('/', authMiddleware, async (req, res) => {
     const { title, startDate, endDate, priority, status } = req.body;
+    console.log("Request Body:", req.body);
 
     // Create a new task and associate it with the logged-in user
     const task = new Task({
@@ -18,6 +19,8 @@ router.post('/', authMiddleware, async (req, res) => {
         status,
         user: req.user // Link task to the authenticated user
     });
+   
+
 
     try {
         const savedTask = await task.save();
