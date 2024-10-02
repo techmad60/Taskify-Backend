@@ -17,7 +17,7 @@ router.post('/', authMiddleware, async (req, res) => {
         return res.status(400).json({ message: "Title, start date, and end date are required." });
     }
 
-    if (!req.user || !req.user._id) { // Check if user ID is available
+    if (!req.user || !req.user.userId) { // Use `userId` instead of `_id`
         return res.status(400).json({ message: "User is not authenticated." });
     }
 
@@ -27,7 +27,7 @@ router.post('/', authMiddleware, async (req, res) => {
         endDate,
         priority: priority || 'defaultPriority', // Set default if not provided
         status: status || 'defaultStatus',       // Set default if not provided
-        user: req.user.userId // Ensure you're saving the user's ID
+        user: req.user.userId // Use the correct user field (userId)
     });
 
     try {
@@ -41,6 +41,7 @@ router.post('/', authMiddleware, async (req, res) => {
         return res.status(500).json({ message: 'Internal server error' });
     }
 });
+
 
 
 // Read all tasks for the logged-in user
