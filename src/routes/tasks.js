@@ -27,7 +27,7 @@ router.post('/', authMiddleware, async (req, res) => {
         endDate,
         priority: priority || 'defaultPriority', // Set default if not provided
         status: status || 'defaultStatus',       // Set default if not provided
-        user: req.user._id // Ensure you're saving the user's ID
+        user: req.user.userId // Ensure you're saving the user's ID
     });
 
     try {
