@@ -6,6 +6,8 @@ const authMiddleware = (req, res, next) => {
     const cookies = req.cookies; // Get token from cookie
     const token = cookies.token
 
+    console.log(cookies)
+
     //const token = req.header('Authorization')?.replace('Bearer ', '');
 
     if (!token) {
