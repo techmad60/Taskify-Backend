@@ -17,7 +17,7 @@ router.post('/', authMiddleware, async (req, res) => {
         return res.status(400).json({ message: "Title, start date, and end date are required." });
     }
 
-    if (!req.user || !req.user.userId) { // Use `userId` instead of `_id`
+    if (!req.user.userId) { // Use `userId` instead of `_id`
         return res.status(400).json({ message: "User is not authenticated." });
     }
 
