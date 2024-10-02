@@ -2,7 +2,6 @@ const express = require('express');
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
 
 const router = express.Router();
 
@@ -39,12 +38,12 @@ router.post('/', async (req, res) => {
         
         // Set token in an HTTP-only cookie
         res.cookie('token', token, {
-            //httpOnly: true,   // Cookie is not accessible via JavaScript (prevents XSS)
-            // secure: process.env.NODE_ENV === 'production', // Set secure flag in production (requires HTTPS)
-            // sameSite: 'strict', // Helps prevent CSRF attacks
+            httpOnly: true,   // Cookie is not accessible via JavaScript (prevents XSS)
+            secure: process.env.NODE_ENV === 'development', // Set secure flag in production (requires HTTPS)
+            sameSite: 'strict', // Helps prevent CSRF attacks
             maxAge: 60 * 60 * 1000, // Token expires in 1 hour
         });
-
+        console.log('Token set in cookie:', token); 
         // Send a single response
         res.json({ message: 'Login successful' }); // Send success message only
         //res.json({ token }); // Send success message only

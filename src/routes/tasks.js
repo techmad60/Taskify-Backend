@@ -16,7 +16,7 @@ router.post('/', authMiddleware, async (req, res) => {
         endDate,
         priority,
         status,
-        user: req.user.userId // Link task to the authenticated user
+        user: req.user // Link task to the authenticated user
     });
 
     try {

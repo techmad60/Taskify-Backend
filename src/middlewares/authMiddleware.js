@@ -1,5 +1,4 @@
 const jwt = require ('jsonwebtoken');
-require('dotenv').config();
 
 const authMiddleware = (req, res, next) => {
     console.log('Cookies:', req.cookies); // Log cookies
@@ -13,7 +12,7 @@ const authMiddleware = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded.userId;
+        req.user = { userId: decoded.userId };
         console.log('User authenticated:', req.user); // Log authenticated user
         next();
     } catch (err) {

@@ -18,7 +18,7 @@ const taskSchema = new mongoose.Schema({
     priority: { type: String, enum: ['Low', 'Medium', 'High'], default: 'Medium', required: false }, // Optional priority
     description: { type: String, required: false }, // Optional description
     status: { type: String, enum: ['Not Started', 'In Progress', 'Completed'], default: 'Not Started', required: false }, // Status added
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true } // Reference the user
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true } // Reference to User
 });
 
 // Export the model to be used in routes
