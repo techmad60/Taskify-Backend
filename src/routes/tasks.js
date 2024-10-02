@@ -21,9 +21,9 @@ router.post('/', authMiddleware, async (req, res) => {
 
     try {
         const savedTask = await task.save();
-        res.status(201).json(savedTask);
+       return res.status(201).json(savedTask);
     } catch (err) {
-        res.status(400).json({ message: err.message });
+        return res.status(400).json({ message: err.message });
     }
 });
 

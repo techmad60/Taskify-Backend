@@ -38,7 +38,7 @@ router.post('/', async (req, res) => {
         
         // Set token in an HTTP-only cookie
         res.cookie('token', token, {
-            httpOnly: false,   // Cookie is not accessible via JavaScript (prevents XSS)
+            httpOnly: true,   // Cookie is not accessible via JavaScript (prevents XSS)
             secure: process.env.NODE_ENV === 'production', // Set secure flag in production (requires HTTPS)
             sameSite: 'strict', // Helps prevent CSRF attacks
             maxAge: 60 * 60 * 1000, // Token expires in 1 hour
