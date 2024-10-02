@@ -38,11 +38,12 @@ router.post('/', async (req, res) => {
         
         // Set token in an HTTP-only cookie
         res.cookie('token', token, {
-            httpOnly: true,   // Cookie is not accessible via JavaScript (prevents XSS)
-            // secure: true, // Set secure flag in production (requires HTTPS)
-            // sameSite: 'none', // Helps prevent CSRF attacks
+            httpOnly: true,
+            secure: true, // Only send the cookie over HTTPS
+            sameSite: 'none', // Allows cross-origin requests when credentials are sent
             maxAge: 60 * 60 * 1000, // Token expires in 1 hour
         });
+        
         console.log('Token set in cookie:', token); 
         // Send a single response
         res.json({ message: 'Login successful' }); // Send success message only
