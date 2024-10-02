@@ -52,7 +52,7 @@ app.use('/api/reset-password', resetPasswordRoutes); // Add reset password route
 // Error handling middleware (optional but recommended)
 app.use((err, req, res, next) => {
     console.error(err.stack); // Log error stack for debugging
-    res.status(500).send('Something broke!'); // Send a generic error response
+    res.status(500).json({message: 'Something broke!'}); // Send a generic error response
 });
 
 
