@@ -7,6 +7,7 @@ const loginRoutes = require('./routes/login');
 const verifyEmailRoutes = require('./routes/verifyEmail');
 const resetPasswordRoutes = require('./routes/resetPassword'); // Import reset password routes
 const requestResetRoutes = require('./routes/requestReset'); // Import request reset routes
+const logoutRoutes = require('./routes/logout')
 const allowedOrigins = require('./allowedOrigins');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
@@ -48,6 +49,7 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/verify-email', verifyEmailRoutes);
 app.use('/api/request-reset', requestResetRoutes); // Add request reset routes
 app.use('/api/reset-password', resetPasswordRoutes); // Add reset password routes
+app.use('/api/logout', logoutRoutes); // Add reset password routes
 
 // Error handling middleware (optional but recommended)
 app.use((err, req, res, next) => {
