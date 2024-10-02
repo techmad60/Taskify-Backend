@@ -32,9 +32,9 @@ router.get('/', authMiddleware, async (req, res) => {
     try {
         // Only return tasks for the logged-in user
         const tasks = await Task.find({ user: req.user.userId });
-        res.json(tasks);
+        return res.json(tasks);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        return res.status(500).json({ message: err.message });
     }
 });
 
