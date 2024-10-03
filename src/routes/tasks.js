@@ -21,8 +21,7 @@ const router = express.Router();
 
 router.post('/schedule-tasks/:userId', authMiddleware, async (req, res) => {
     try {
-        const userId = req.user.userId; 
-        const tasks = await Task.find({ user: userId });
+        const tasks = await Task.find({ user: req.user.userId });
 
         if (tasks.length === 0) {
             return res.status(404).json({ message: "No tasks found for this user." });
