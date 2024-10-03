@@ -19,7 +19,7 @@ const router = express.Router();
 //     }
 // });
 
-router.post('/schedule-tasks/:userId', authMiddleware, async (req, res) => {
+router.post('/schedule-tasks', authMiddleware, async (req, res) => {
     try {
         const tasks = await Task.find({ user: req.user.userId });
 
