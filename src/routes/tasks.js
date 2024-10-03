@@ -6,20 +6,8 @@ const { runGeneticAlgorithm } = require('../geneticAlgorithm'); // Adjust the pa
 const router = express.Router();
 
 
-// API endpoint to get tasks for a user
-// router.get('/:userId', async (req, res) => {
-//     const { userId } = req.params;
-//     try {
-//         const trimmedUserId = userId.trim(); 
-//         const tasks = await Task.find({ user: trimmedUserId }); // Fetch tasks for a specific user
-//         res.json(tasks); // Send tasks back as JSON
-//     } catch (error) {
-//         console.error("Error fetching tasks:", error);
-//         res.status(500).send("Error fetching tasks");
-//     }
-// });
 
-router.post('/schedule-tasks', authMiddleware, async (req, res) => {
+router.get('/schedule-tasks', authMiddleware, async (req, res) => {
     try {
         const tasks = await Task.find({ user: req.user.userId });
 
