@@ -35,6 +35,10 @@ router.post('/', authMiddleware, async (req, res) => {
         return res.status(400).json({ message: "Title, start date, and end date are required." });
     }
 
+    // Log the parsed start and end dates to ensure they are valid dates
+    console.log("Parsed Start Date:", new Date(startDate));
+    console.log("Parsed End Date:", new Date(endDate));
+
     if (!req.user.userId) { // Use `userId` instead of `_id`
         return res.status(400).json({ message: "User is not authenticated." });
     }
