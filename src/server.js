@@ -9,6 +9,8 @@ const resetPasswordRoutes = require('./routes/resetPassword'); // Import reset p
 const requestResetRoutes = require('./routes/requestReset'); // Import request reset routes
 const logoutRoutes = require('./routes/logout')
 const allowedOrigins = require('./allowedOrigins');
+
+
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 require('dotenv').config(); // To load the .env variables

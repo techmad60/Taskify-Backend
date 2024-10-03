@@ -1,51 +1,72 @@
 const Task = require('./models/Task'); // Adjust the path to your Task model
 
-// Define the fitness function
+// Function to generate a random order of tasks
+const generateRandomOrder = (tasks) => {
+    const shuffledTasks = [...tasks];
+    //Fisher-Yates Algorithm
+    for (let i = shuffledTasks.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledTasks[i], shuffledTasks[j]] = [shuffledTasks[j], shuffledTasks[i]];
+    }
+    return shuffledTasks;
+};
+
+// Fitness function to evaluate task orders
 const fitnessFunction = (taskOrder) => {
     let score = 0;
-    // Calculate score based on task deadlines, priority, and duration
-    // You can prioritize tasks that are close to their deadlines
     taskOrder.forEach(task => {
         const deadlineScore = (new Date(task.endDate) - new Date()) / (1000 * 60 * 60); // Time until deadline in hours
-        score += deadlineScore; // You can also add priority weight here
+        const priorityScore = task.priority === "High" ? 10 : task.priority === "Medium" ? 5 : 1; // Assign scores based on priority
+        score += deadlineScore + priorityScore; // Add both scores
     });
     return score;
 };
 
-// Define the genetic algorithm function
-const geneticAlgorithm = async () => {
-    const tasks = await Task.find(); // Get all tasks from DB
-    let population = generateInitialPopulation(tasks);
+// Select parents based on fitness scores
+const selectParents = (population) => {
+    const sortedPopulation = population.sort((a, b) => fitnessFunction(b) - fitnessFunction(a));
+    return sortedPopulation.slice(0, Math.floor(population.length * 0.2)); // Select top 20% of the population
+};
 
-    for (let generation = 0; generation < MAX_GENERATIONS; generation++) {
-        // Evaluate fitness
-        population.forEach(individual => {
-            individual.fitness = fitnessFunction(individual);
-        });
+// Crossover function to create new individuals
+const crossover = (parent1, parent2) => {
+    const crossoverPoint = Math.floor(Math.random() * parent1.length);
+    return [...parent1.slice(0, crossoverPoint), ...parent2.slice(crossoverPoint)];
+};
 
-        // Selection
-        const selected = selectBestIndividuals(population);
+// Mutation function to introduce random changes
+const mutate = (taskOrder) => {
+    const mutatedOrder = [...taskOrder];
+    const index1 = Math.floor(Math.random() * mutatedOrder.length);
+    const index2 = Math.floor(Math.random() * mutatedOrder.length);
+    [mutatedOrder[index1], mutatedOrder[index2]] = [mutatedOrder[index2], mutatedOrder[index1]]; // Swap tasks
+    return mutatedOrder;
+};
 
-        // Crossover
-        const offspring = crossover(selected);
+// Main function to run the genetic algorithm
+const runGeneticAlgorithm = (tasks, generations = 100) => {
+    let population = Array.from({ length: 100 }, () => generateRandomOrder(tasks));
 
-        // Mutation
-        mutate(offspring);
+    for (let i = 0; i < generations; i++) {
+        const parents = selectParents(population);
+        const nextGeneration = [];
 
-        // Replacement
-        population = replacePopulation(population, offspring);
+        while (nextGeneration.length < population.length) {
+            const parent1 = parents[Math.floor(Math.random() * parents.length)];
+            const parent2 = parents[Math.floor(Math.random() * parents.length)];
+            let child = crossover(parent1, parent2);
+            if (Math.random() < 0.1) { // 10% mutation chance
+                child = mutate(child);
+            }
+            nextGeneration.push(child);
+        }
+        population = nextGeneration;
     }
 
-    // Return the best solution found
-    return population.sort((a, b) => b.fitness - a.fitness)[0];
+    return selectParents(population)[0]; // Return the best solution found
 };
 
-// Helper functions
-const generateInitialPopulation = (tasks) => {
-    // Create initial random task orders
-    return [...Array(POPULATION_SIZE)].map(() => shuffleArray(tasks));
+// Export the function for use in your routes
+module.exports = {
+    runGeneticAlgorithm,
 };
-
-// Add other helper functions like selectBestIndividuals, crossover, mutate, replacePopulation, etc.
-
-module.exports = geneticAlgorithm;

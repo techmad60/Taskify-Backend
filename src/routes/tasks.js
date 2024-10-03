@@ -1,9 +1,40 @@
 const express = require('express');
 const Task = require('../models/Task');
 const authMiddleware = require('../middlewares/authMiddleware'); // Import your auth middleware
+const { runGeneticAlgorithm } = require('../geneticAlgorithm'); // Adjust the path accordingly
+
 const router = express.Router();
 
 
+// API endpoint to get tasks for a user
+// router.get('/:userId', async (req, res) => {
+//     const { userId } = req.params;
+//     try {
+//         const trimmedUserId = userId.trim(); 
+//         const tasks = await Task.find({ user: trimmedUserId }); // Fetch tasks for a specific user
+//         res.json(tasks); // Send tasks back as JSON
+//     } catch (error) {
+//         console.error("Error fetching tasks:", error);
+//         res.status(500).send("Error fetching tasks");
+//     }
+// });
+
+router.post('/schedule-tasks/:userId', authMiddleware, async (req, res) => {
+    try {
+        const userId = req.user.userId; 
+        const tasks = await Task.find({ user: userId });
+
+        if (tasks.length === 0) {
+            return res.status(404).json({ message: "No tasks found for this user." });
+        }
+
+        const bestOrder = runGeneticAlgorithm(tasks);
+        res.json({ scheduledTasks: bestOrder });
+    } catch (error) {
+        console.error("Error scheduling tasks:", error);
+        res.status(500).json({ message: "Internal server error." });
+    }
+});
 
 
 // Create a new task (only for authenticated users)
