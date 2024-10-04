@@ -17,9 +17,9 @@ router.get('/schedule', authMiddleware, async (req, res) => {
             return res.status(404).json({ message: "No tasks found for this user." });
         }
 
-        const bestOrder = runGeneticAlgorithm(tasks);
-        console.log("Best task order determined:", bestOrder);
-        res.json({ scheduledTasks: bestOrder });
+        // const bestOrder = runGeneticAlgorithm(tasks);
+        // console.log("Best task order determined:", bestOrder);
+        // res.json({ scheduledTasks: bestOrder });
     } catch (error) {
         console.error("Error scheduling tasks:", error);
         res.status(500).json({ message: "Internal server error." });
