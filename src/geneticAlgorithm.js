@@ -1,9 +1,7 @@
-const Task = require('./models/Task'); // Adjust the path to your Task model
 
-// Function to generate a random order of tasks
+// Function to generate a random order of tasks (with deep copy)
 const generateRandomOrder = (tasks) => {
-    const shuffledTasks = [...tasks];
-    //Fisher-Yates Algorithm
+    const shuffledTasks = tasks.map(task => ({ ...task })); // Deep copy of each task object
     for (let i = shuffledTasks.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [shuffledTasks[i], shuffledTasks[j]] = [shuffledTasks[j], shuffledTasks[i]];
@@ -28,17 +26,23 @@ const selectParents = (population) => {
     return sortedPopulation.slice(0, Math.floor(population.length * 0.2)); // Select top 20% of the population
 };
 
-// Crossover function to create new individuals
+// Crossover function to create new individuals, ensuring no duplicate tasks
 const crossover = (parent1, parent2) => {
     const crossoverPoint = Math.floor(Math.random() * parent1.length);
-    return [...parent1.slice(0, crossoverPoint), ...parent2.slice(crossoverPoint)];
+    const child = [...parent1.slice(0, crossoverPoint), ...parent2.slice(crossoverPoint)];
+
+    // Ensure uniqueness in the child
+    return [...new Map(child.map(task => [task._id, task])).values()];
 };
 
-// Mutation function to introduce random changes
+// Mutation function to introduce random changes, ensuring no duplicate swaps
 const mutate = (taskOrder) => {
     const mutatedOrder = [...taskOrder];
-    const index1 = Math.floor(Math.random() * mutatedOrder.length);
-    const index2 = Math.floor(Math.random() * mutatedOrder.length);
+    let index1 = Math.floor(Math.random() * mutatedOrder.length);
+    let index2;
+    do {
+        index2 = Math.floor(Math.random() * mutatedOrder.length);
+    } while (index1 === index2); // Ensure different indices
     [mutatedOrder[index1], mutatedOrder[index2]] = [mutatedOrder[index2], mutatedOrder[index1]]; // Swap tasks
     return mutatedOrder;
 };
@@ -63,7 +67,8 @@ const runGeneticAlgorithm = (tasks, generations = 100) => {
         population = nextGeneration;
     }
 
-    return selectParents(population)[0]; // Return the best solution found
+    // Return the best solution found, ensuring uniqueness
+    return [...new Map(selectParents(population)[0].map(task => [task._id, task])).values()];
 };
 
 // Export the function for use in your routes
