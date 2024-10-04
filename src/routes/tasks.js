@@ -7,7 +7,7 @@ const router = express.Router();
 
 
 
-router.get('/schedule-tasks', authMiddleware, async (req, res) => {
+router.get('/schedule', authMiddleware, async (req, res) => {
     try {
         console.log("Fetching tasks for user ID:", req.user.userId);
         const tasks = await Task.find({ user: req.user.userId });
