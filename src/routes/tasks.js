@@ -9,19 +9,23 @@ const router = express.Router();
 
 router.get('/schedule-tasks', authMiddleware, async (req, res) => {
     try {
+        console.log("Fetching tasks for user ID:", req.user.userId);
         const tasks = await Task.find({ user: req.user.userId });
 
         if (tasks.length === 0) {
+            console.log("No tasks found for user ID:", req.user.userId);
             return res.status(404).json({ message: "No tasks found for this user." });
         }
 
         const bestOrder = runGeneticAlgorithm(tasks);
+        console.log("Best task order determined:", bestOrder);
         res.json({ scheduledTasks: bestOrder });
     } catch (error) {
         console.error("Error scheduling tasks:", error);
         res.status(500).json({ message: "Internal server error." });
     }
 });
+
 
 
 // Create a new task (only for authenticated users)
