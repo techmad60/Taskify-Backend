@@ -21,6 +21,17 @@ const taskSchema = new mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true } // Reference to User
 });
 
+// Add a virtual field to calculate the time left until the end date
+taskSchema.virtual('timeLeft').get(function() {
+    const currentTime = new Date();
+    const endDate = new Date(this.endDate);
+    const timeDifference = endDate - currentTime; // Time in milliseconds
+
+    // Return the time left in hours, or 0 if the task is overdue
+    return timeDifference > 0 ? Math.ceil(timeDifference / (1000 * 60 * 60)) : 0;
+});
+
+
 // Export the model to be used in routes
 const Task = mongoose.model('Task', taskSchema);
 module.exports = Task;
