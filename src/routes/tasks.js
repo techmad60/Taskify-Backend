@@ -64,7 +64,7 @@ router.post('/', authMiddleware, async (req, res) => {
 // Read all tasks for the logged-in user
 router.get('/', authMiddleware, async (req, res) => {
     try {
-        const tasks = await Task.find({ user: req.user.userId });
+        const tasks = await Task.find({ user: req.user.userId }).lean({ virtuals: true });
         return res.status(200).json(tasks); // Ensure you're sending back the entire task object
     } catch (err) {
         return res.status(500).json({ message: 'Internal server error' });
