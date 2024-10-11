@@ -1,7 +1,7 @@
 const express = require('express');
 const Task = require('../models/Task');
 const authMiddleware = require('../middlewares/authMiddleware'); // Import your auth middleware
-const { runGeneticAlgorithm } = require('../geneticAlgorithm'); // Adjust the path accordingly
+const { optimizeTasks} = require('../geneticAlgorithm'); // Adjust the path accordingly
 
 const router = express.Router();
 
@@ -9,23 +9,24 @@ const router = express.Router();
 
 router.get('/schedule', authMiddleware, async (req, res) => {
     try {
-        console.log("Fetching tasks for user ID:", req.user.userId);
-        const tasks = await Task.find({ user: req.user.userId });
+        // console.log("Fetching tasks for user ID:", req.user.userId).lean();
+        const tasks = await Task.find({ user: req.user.userId }).lean();
+        console.log("Tasks fetched from DB:", tasks);
 
         if (tasks.length === 0) {
             console.log("No tasks found for user ID:", req.user.userId);
             return res.status(404).json({ message: "No tasks found for this user." });
         }
+       
+        const optimizedTasks = optimizeTasks(tasks); // Use fitness function for optimization
 
-        const bestOrder = runGeneticAlgorithm(tasks);
-        console.log("Best task order determined:", bestOrder);
-        res.json({ scheduledTasks: bestOrder });
+        
+        res.json({ scheduledTasks: optimizedTasks}); // Send plain tasks
     } catch (error) {
         console.error("Error scheduling tasks:", error);
         res.status(500).json({ message: "Internal server error." });
     }
 });
-
 
 
 // Create a new task (only for authenticated users)
