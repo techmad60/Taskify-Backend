@@ -9,8 +9,7 @@ const router = express.Router();
 
 router.get('/schedule', authMiddleware, async (req, res) => {
     try {
-        // console.log("Fetching tasks for user ID:", req.user.userId).lean();
-        const tasks = await Task.find({ user: req.user.userId }).lean();
+        const tasks = await Task.find({ user: req.user.userId }).lean({ virtuals: true });
         console.log("Tasks fetched from DB:", tasks);
 
         if (tasks.length === 0) {

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongooseLeanVirtuals = require('mongoose-lean-virtuals');
 const { v4: uuidv4 } = require('uuid');
 
 const taskSchema = new mongoose.Schema({
@@ -21,7 +22,6 @@ const taskSchema = new mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true } // Reference to User
 });
 
-// Add a virtual field to calculate the time left until the end date
 taskSchema.virtual('timeLeft').get(function() {
     const currentTime = new Date();
     const endDate = new Date(this.endDate);
@@ -31,7 +31,11 @@ taskSchema.virtual('timeLeft').get(function() {
     return timeDifference > 0 ? Math.ceil(timeDifference / (1000 * 60 * 60)) : 0;
 });
 
-
+// Ensure virtual fields are serialized
+taskSchema.set('toObject', { virtuals: true });
+taskSchema.set('toJSON', { virtuals: true });
+// Attach the mongoose-lean-virtuals plugin
+taskSchema.plugin(mongooseLeanVirtuals);
 // Export the model to be used in routes
 const Task = mongoose.model('Task', taskSchema);
 module.exports = Task;
