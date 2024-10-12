@@ -39,7 +39,7 @@ router.post('/', async (req, res) => {
         // Set token in an HTTP-only cookie
         res.cookie('token', token, {
             httpOnly: true,
-            secure: true, // Only send the cookie over HTTPS
+            secure: false, // Only send the cookie over HTTPS
             sameSite: 'none', // Allows cross-origin requests when credentials are sent
             maxAge: 60 * 60 * 1000, // Token expires in 1 hour
         });

@@ -4,10 +4,10 @@ const mongoose = require('mongoose');
 const taskRoutes = require('./routes/tasks');
 const signupRoutes = require('./routes/signup');
 const loginRoutes = require('./routes/login');
+const logoutRoutes = require('./routes/logout');
 const verifyEmailRoutes = require('./routes/verifyEmail');
 const resetPasswordRoutes = require('./routes/resetPassword'); // Import reset password routes
 const requestResetRoutes = require('./routes/requestReset'); // Import request reset routes
-const logoutRoutes = require('./routes/logout')
 const allowedOrigins = require('./allowedOrigins');
 
 
