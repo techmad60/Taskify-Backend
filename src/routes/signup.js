@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
 
 // Function to send verification email
 const sendVerificationEmail = (email, token) => {
-    const verificationLink = `https://taskify-backend-nq1q.onrender.com/api/verify-email?token=${token}`;
+    const verificationLink = `https://taskify-backend-100.up.railway.app/api/verify-email?token=${token}`;
 
     const mailOptions = {
         from: process.env.EMAIL,
